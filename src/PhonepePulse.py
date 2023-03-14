@@ -1,6 +1,7 @@
 import pandas as pd
 import streamlit as st
 import plotly.express as px
+import plotly.graph_objects as go
 from sqlalchemy import create_engine
 from sqlalchemy import text
 import dbConfig as config
@@ -24,6 +25,72 @@ df_Years = pd.read_sql(qryYears, con=connection)
 #Look Up DataFrames - States
 qryStates = text("SELECT DISTINCT State FROM phonepepulse.Map_Hover_User_Transaction_Data")
 df_States = pd.read_sql(qryStates, con=connection)
+
+#Top 10 States and District Transaction - Formation
+def getTopTransactionData(year, quarter, connection, stateFlag):
+    headerColor = 'grey'
+    rowEvenColor = 'lightgrey'
+    rowOddColor = 'white'
+    if stateFlag:
+        qryTopTransData = text("SELECT a.State_District_Name, a.Transacion_amount " +
+                           "FROM phonepepulse.Map_Hover_Transaction_Data a " +
+                           "WHERE State != 'All-India' AND Year = '" + year + "' AND Quater = '" + quarter + "'" +  
+                           "ORDER BY Transacion_amount DESC LIMIT 10")
+    else:    
+        qryTopTransData = text("SELECT a.State_District_Name, a.Transacion_amount " +
+                            "FROM phonepepulse.Map_Hover_Transaction_Data a " +
+                            "WHERE State = 'All-India' AND Year = '" + year + "' AND Quater = '" + quarter + "'" +  
+                            "ORDER BY Transacion_amount DESC LIMIT 10")
+        
+    df_TopTransData = pd.read_sql(qryTopTransData, con=connection)
+
+    colors = ['rgb(239, 243, 255)', 'rgb(189, 215, 231)', 'rgb(107, 174, 214)',
+              'rgb(49, 130, 189)', 'rgb(239, 243, 255)', 
+              'rgb(189, 215, 231)', 'rgb(107, 174, 214)', 'rgb(49, 130, 189)', 'rgb(70, 130, 180)', 'rgb(8, 81, 156)']
+    data = {'State' : df_TopTransData['State_District_Name'].apply(lambda x: x.title()).to_list(), 'Amount' : df_TopTransData['Transacion_amount'].to_list(), 'Color' : colors}
+    df = pd.DataFrame(data)    
+
+    if stateFlag:
+       topTransFig = go.Figure(data=[go.Table(
+                    header=dict(
+                        values=['<b>TOP 10 DISTRICTS</b>','<b>AMOUNT</b>'],
+                        line_color='darkslategray',
+                        fill_color=headerColor,
+                        align=['left','center'],
+                        font=dict(color='white', size=12)
+                    ),
+                    cells=dict(
+                        values=[df.State, df.Amount],
+                        line_color='darkslategray',
+                        # 2-D list of colors for alternating rows
+                        fill_color = [[rowOddColor,rowEvenColor,rowOddColor, rowEvenColor,rowOddColor]*5],
+                        align = ['left', 'center'],
+                        font = dict(color = 'darkslategray', size = 11)
+                        ))
+                    ])
+    else:
+        topTransFig = go.Figure(data=[go.Table(
+                    header=dict(
+                        values=['<b>TOP 10 STATES</b>','<b>AMOUNT</b>'],
+                        line_color='darkslategray',
+                        fill_color=headerColor,
+                        align=['left','center'],
+                        font=dict(color='white', size=12)
+                    ),
+                    cells=dict(
+                        values=[df.State, df.Amount],
+                        line_color='darkslategray',
+                        # 2-D list of colors for alternating rows
+                        fill_color = [[rowOddColor,rowEvenColor,rowOddColor, rowEvenColor,rowOddColor]*5],
+                        align = ['left', 'center'],
+                        font = dict(color = 'darkslategray', size = 11)
+                        ))
+                    ])
+        
+    topTransFig.update_layout(autosize=False,
+                       width=500,
+                       height=700,)
+    return topTransFig
 
 #Bar Chart - Formation
 def getAggregatedTransData(state, year, quarter, connection):
@@ -172,8 +239,8 @@ with st.container():
 
     st.sidebar.header("Category List")
     menu = ["📈 Aggregated Data","📈 Map Hover Data"]
-    choice = st.sidebar.selectbox(":black[Visualization Category]",menu)
-    
+    choice = st.sidebar.selectbox(":black[Visualization Category]", menu)
+
 
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -185,7 +252,14 @@ with st.container():
     with col3:
         st_quater = st.selectbox('Quater', df_Quarters["Quater"])
         st.write(' ')
-   
+
+    genre = st.sidebar.radio("Top 10 Transaction Data", ('State', 'District'), horizontal=True)
+
+    if genre == 'State':
+        st.sidebar.plotly_chart(getTopTransactionData(st_year, st_quater, connection, False))
+    else:
+        st.sidebar.plotly_chart(getTopTransactionData(st_year, st_quater, connection, True))
+
     if choice == "📈 Aggregated Data":
         subHeader('Statewise Transaction Data','#191970')
         st.plotly_chart(getAggregatedTransData(st_state, st_year, st_quater, connection))
