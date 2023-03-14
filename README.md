@@ -5,29 +5,35 @@ Run the required dependencies given in the requirementALL.txt
 
 Clone your master repository to your local machine. The github repository URL is .
 
-Start the tweetScrap.py file, using the command "streamlit run tweetScrap.py".
+Since the Data is already extracted and stored in my cloud database, you can directly 
+start the phonepepulse.py file, using the command "streamlit run phonepepulse.py".
 
 This will initialize the Streamlit form with the cusotm port of http://localhost:8051
 
-It has below fields
-    Search Text
-    From Date
-    To Date
-    Number of tweets
+If you need to extract and store it on your database. You have to modify the connection settings in the dbConfig.py file.
+Once it is done, Run the below DataInsertion.py file, this will call the DataExtraction methods on the below files
 
-   Search Text - Text to scrap the data from tweeter using snScrape
-   From Date - From which date you want to scrape
-   To Date - Till which date you want to scrape
-   Number of tweets - Count to define the number of scrape data to be fetched, by default its defined as 500
+AggregatedTransactionData.py
+AggregatedUserTransactionData.py
+MapHoverTransactionData.py
+MapHoverUserTransactionData.py
+TopTransactionData.py
+TopRegisteredUserData.py
 
-Once you click the button "Click to Scrap", the behid method will fetch the data from tweeter and displayed in the dataframe
+Once the data successfully inserted on your custom database the phonepepulse.py file, using the command "streamlit run phonepepulse.py".
 
-We also give 3 options to store the data
-    Upload it to Mongo DB
-    Download the data as CSV file
-    Download the data as JSON file
+This will initialize the Streamlit form with the cusotm port of http://localhost:8051
 
-By clicking on the respective buttons, the respective methods will be triggered and the data will be saved or downloaded on your local machine
+It has Menu with Visualization Category list on the Sidebar, Year, State, Quarter fields
+
+   Visualization Category - User option to choose the visualization for Aggregated Data or Map Hover Data
+   Year - List of Years
+   State - List of States / All India
+   Quarter - Qarter of a Year
+
+Once you choose the visualization category, the behid methods will fetch the data from Database and displayed in the Plotly Express Charts
+
+
 
 
 
