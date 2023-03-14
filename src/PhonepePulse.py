@@ -235,7 +235,7 @@ def subHeader(title, colorCode):
 # ------------------------------------------ Data Visualizations Using Streamlit and Plotly Express----------------------------
 with st.container():
     Header('PhonePe Pulse Data Visualization(2018-2022)📈', '#4B0082')
-    st.image('../img/dv.jpg')
+    st.sidebar.image('../img/dv.jpg')
 
     st.sidebar.header("Category List")
     menu = ["📈 Aggregated Data","📈 Map Hover Data"]
@@ -253,7 +253,8 @@ with st.container():
         st_quater = st.selectbox('Quater', df_Quarters["Quater"])
         st.write(' ')
 
-    genre = st.sidebar.radio("Top 10 Transaction Data", ('State', 'District'), horizontal=True)
+    st.sidebar.header("Top 10 Transaction Data")
+    genre = st.sidebar.radio("", ('State', 'District'), horizontal=True)
 
     if genre == 'State':
         st.sidebar.plotly_chart(getTopTransactionData(st_year, st_quater, connection, False))
