@@ -1,0 +1,19 @@
+[project]
+name = "Python-Project-PhonePe-Pulse-Data-Visualization"
+version = "0.0.1"
+authors = [
+  { name="Ananda Padmanaban", email="anna.shy314@gmail.com" },
+]
+description = "This project will provide the data Visualization of PhonePe data.
+               The data was extracted from github(https://github.com/PhonePe/pulse).
+               Data visualization includes chart view and geo visualization view"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/annapen813/PhonePe-Pulse"
